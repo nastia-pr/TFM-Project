@@ -1,3 +1,6 @@
+# TFM-Project
+Code for the Final Project of the Master Degree using Vue 3 Framework.
+
 # vue-project
 
 This template should help get you started developing with Vue 3 in Vite.
@@ -27,6 +30,3 @@ npm run dev
 ```sh
 npm run build
 ```
-
-# TFM-Project
-Code for the Final Project of the Master Degree using Vue 3 Framework.
