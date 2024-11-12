@@ -2,6 +2,6 @@
 
 <template>
   <div>
-    <h1>About Page</h1>
+    <h1>Create Event</h1>
   </div>
 </template>
