@@ -1,19 +1,35 @@
 <template>
   <v-app>
     <v-app-bar app color="indigo" dark>
-      <v-toolbar-title>thriftHunter</v-toolbar-title>
+      <v-toolbar-title @click="goToHome" class="toolbar-title-link"
+        >thriftHunter</v-toolbar-title
+      >
 
       <v-spacer></v-spacer>
       <nav>
         <RouterLink to="/" class="nav-link">Encuentra Eventos</RouterLink>
-        <RouterLink to="/create-event" class="nav-link"
-          >Crea tu Evento</RouterLink
-        >
+        <template v-if="loggedIn">
+          <RouterLink to="/account-create-event" class="nav-link"
+            >Crea un evento nuevo</RouterLink
+          >
+          <RouterLink to="/my-events" class="nav-link"
+            >Ver todos mis eventos</RouterLink
+          >
+          <a href="#" @click.prevent="loggedIn = false" class="nav-link"
+            >Log Out</a
+          >
+        </template>
+        <template v-else>
+          <RouterLink to="/create-event" class="nav-link"
+            >Crea tu Evento</RouterLink
+          >
+          <RouterLink to="/login" class="nav-link">Log In</RouterLink>
+        </template>
       </nav>
     </v-app-bar>
 
     <v-main>
-      <RouterView />
+      <RouterView @login-success="handleLoginSuccess" />
     </v-main>
 
     <v-footer color="indigo darken-3">
@@ -30,10 +46,26 @@
           </v-col>
 
           <v-col class="text-center">
-            <RouterLink to="/" class="nav-link">Encuentra Eventos</RouterLink>
-            <RouterLink to="/create-event" class="nav-link"
-              >Crea tu Evento</RouterLink
-            >
+            <div class="footer-links">
+              <RouterLink to="/" class="nav-link">Encuentra Eventos</RouterLink>
+              <template v-if="loggedIn">
+                <RouterLink to="/account-create-event" class="nav-link"
+                  >Crea un evento nuevo</RouterLink
+                >
+                <RouterLink to="/my-events" class="nav-link"
+                  >Ver todos mis eventos</RouterLink
+                >
+                <a href="#" @click.prevent="loggedIn = false" class="nav-link"
+                  >Log Out</a
+                >
+              </template>
+              <template v-else>
+                <RouterLink to="/create-event" class="nav-link"
+                  >Crea tu Evento</RouterLink
+                >
+                <RouterLink to="/login" class="nav-link">Log In</RouterLink>
+              </template>
+            </div>
           </v-col>
 
           <v-col class="text-right">
@@ -71,6 +103,16 @@
 </template>
 
 <style scoped>
+.toolbar-title-link {
+  cursor: pointer;
+  color: inherit;
+  transition: color 0.3s ease;
+  text-decoration: none;
+}
+
+.toolbar-title-link:hover {
+  color: #f1f3e2;
+}
 .nav-link {
   color: white;
   margin: 0 15px;
@@ -114,18 +156,28 @@
   color: #ffcc00;
 }
 
-.footer-link {
-  color: white;
-}
-
-.footer-link:hover {
-  color: #ffcc00;
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px; /* Optional: center the links horizontally */
 }
 </style>
 
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
 import { ref } from 'vue'
+
+const router = useRouter() // Access the router instance
+const loggedIn = ref(false)
+
+const goToHome = () => {
+  router.push({ name: 'home' }) // Navigate to the Home page route by name
+}
+
+const handleLoginSuccess = () => {
+  loggedIn.value = true // Set logged in status to true
+}
 
 const currentYear = ref(new Date().getFullYear())
 </script>
