@@ -16,12 +16,27 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/CreateEvent.vue'),
+      component: () => import('../views/AdvantagesSignIn.vue'),
     },
     {
       path: '/event/:id', // Dynamic route for event details
       name: 'event-details',
       component: EventDetails,
+    },
+    {
+      path: '/login', // New route for login page
+      name: 'login',
+      component: () => import('../views/Login.vue'), // Lazy-loaded login component
+    },
+    {
+      path: '/create-account', // New route for login page
+      name: 'create-account',
+      component: () => import('../views/CreateAccount.vue'), // Lazy-loaded login component
+    },
+    {
+      path: '/account-create.event', // New route for login page
+      name: 'account-create-event',
+      component: () => import('../views/AccountCreateEvent.vue'), // Lazy-loaded login component
     },
   ],
 })
