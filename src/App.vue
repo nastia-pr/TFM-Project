@@ -1,85 +1,131 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <v-app>
+    <v-app-bar app color="indigo" dark>
+      <v-toolbar-title>thriftHunter</v-toolbar-title>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
+      <v-spacer></v-spacer>
       <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/" class="nav-link">Encuentra Eventos</RouterLink>
+        <RouterLink to="/create-event" class="nav-link"
+          >Crea tu Evento</RouterLink
+        >
       </nav>
-    </div>
-  </header>
+    </v-app-bar>
 
-  <RouterView />
+    <v-main>
+      <RouterView />
+    </v-main>
+
+    <v-footer color="indigo darken-3">
+      <v-container>
+        <v-row align="center" justify="space-between">
+          <v-col class="text-left">
+            <p>thriftHunter</p>
+            <p>
+              Contact:
+              <a href="mailto:info@thriftHunter.com" class="footer-link"
+                >info@thriftHunter.com</a
+              >
+            </p>
+          </v-col>
+
+          <v-col class="text-center">
+            <RouterLink to="/" class="nav-link">Encuentra Eventos</RouterLink>
+            <RouterLink to="/create-event" class="nav-link"
+              >Crea tu Evento</RouterLink
+            >
+          </v-col>
+
+          <v-col class="text-right">
+            <a
+              href="https://www.facebook.com"
+              target="_blank"
+              class="social-icon"
+            >
+              <v-icon small>mdi-facebook</v-icon>
+            </a>
+            <a
+              href="https://www.instagram.com"
+              target="_blank"
+              class="social-icon"
+            >
+              <v-icon small>mdi-instagram</v-icon>
+            </a>
+            <a href="https://twitter.com" target="_blank" class="social-icon">
+              <v-icon small>mdi-twitter</v-icon>
+            </a>
+          </v-col>
+        </v-row>
+
+        <v-row justify="center">
+          <v-col class="text-center">
+            <p>
+              &copy; {{ new Date().getFullYear() }} thriftHunter. All rights
+              reserved.
+            </p>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-footer>
+  </v-app>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+.nav-link {
+  color: white;
+  margin: 0 15px;
+  text-decoration: none;
+  position: relative;
+  transition:
+    color 0.3s ease,
+    transform 0.3s ease;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  width: 0;
+  height: 2px;
+  background: white;
+  transition:
+    width 0.3s ease,
+    left 0.3s ease;
 }
 
-nav {
+.nav-link:hover {
+  color: #ffcc00;
+  transform: scale(1.1);
+}
+
+.nav-link:hover::after {
   width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+  left: 0;
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
+.social-icon {
+  color: white;
+  font-size: 18px;
+  margin: 0 10px;
 }
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
+.social-icon:hover {
+  color: #ffcc00;
 }
 
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
+.footer-link {
+  color: white;
 }
 
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+.footer-link:hover {
+  color: #ffcc00;
 }
 </style>
+
+<script setup>
+import { RouterLink, RouterView } from 'vue-router'
+import { ref } from 'vue'
+
+const currentYear = ref(new Date().getFullYear())
+</script>
