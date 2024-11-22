@@ -3,64 +3,131 @@
     <!-- Top Image Banner -->
     <v-container fluid class="banner-container">
       <v-img
-        src="/images/secondhand.avif"
+        src="/images/banner-img.avif"
         alt="Landing Page Banner"
-        height="300px"
+        height="400px"
         cover
       ></v-img>
+    </v-container>
+
+    <!-- Title Below the Image -->
+    <v-container class="text-center mt-4">
+      <h2 class="title">Próximos eventos</h2>
     </v-container>
 
     <!-- Filter Options -->
     <v-container class="filter-container">
       <v-row align="center" justify="space-between">
-        <v-text-field
-          v-model="searchQuery"
-          label="Search Events"
-          outlined
-          hide-details
-          class="filter-input"
-        />
-        <v-select
-          v-model="selectedCategory"
-          :items="categories"
-          label="Category"
-          outlined
-          hide-details
-          class="filter-input"
-        />
-        <v-select
-          v-model="selectedLocation"
-          :items="locations"
-          label="Location"
-          outlined
-          hide-details
-          class="filter-input"
-        />
-        <v-text-field
-          v-model="selectedDate"
-          label="Event Date"
-          outlined
-          hide-details
-          type="date"
-          class="filter-input"
-        />
-        <v-btn color="primary" @click="applyFilters">Apply Filters</v-btn>
+        <v-col cols="12">
+          <v-text-field
+            v-model="searchQuery"
+            label="Buscar eventos"
+            outlined
+            hide-details
+            class="filter-input"
+          />
+        </v-col>
+
+        <v-col cols="12" md="6">
+          <v-select
+            v-model="selectedCategory"
+            :items="categories"
+            label="Categoría"
+            outlined
+            hide-details
+            class="filter-input"
+          />
+        </v-col>
+
+        <v-col cols="12" md="6">
+          <v-select
+            v-model="selectedLocation"
+            :items="locations"
+            label="Ubicación"
+            outlined
+            hide-details
+            class="filter-input"
+          />
+        </v-col>
+
+        <v-col cols="12" md="6">
+          <v-text-field
+            v-model="startDate"
+            label="Fecha de inicio"
+            outlined
+            hide-details
+            type="date"
+            class="filter-input"
+          />
+        </v-col>
+
+        <v-col cols="12" md="6">
+          <v-text-field
+            v-model="endDate"
+            label="Fecha de fin"
+            outlined
+            hide-details
+            type="date"
+            class="filter-input"
+          />
+        </v-col>
       </v-row>
+    </v-container>
+
+    <!-- Reset Filter Button -->
+    <v-container class="button-container text-center">
+      <v-btn color="secondary" class="mx-2" @click="resetFilters">
+        Restablecer filtros
+      </v-btn>
     </v-container>
 
     <!-- Event Cards -->
     <v-container>
       <v-row>
-        <v-col v-for="event in filteredEvents" :key="event.id" cols="12" md="4">
-          <v-card>
-            <v-img :src="event.image" height="200px"></v-img>
-            <v-card-title>{{ event.title }}</v-card-title>
-            <v-card-subtitle>{{ event.date }}</v-card-subtitle>
-            <v-card-text>{{ event.description }}</v-card-text>
-            <v-card-actions>
-              <v-btn :to="{ name: 'event-details', params: { id: event.id } }"
-                >View Details</v-btn
+        <v-col
+          v-for="event in filteredEvents"
+          :key="event.id"
+          cols="12"
+          md="4"
+          class="d-flex"
+        >
+          <v-card class="event-card d-flex flex-column">
+            <v-img :src="event.image" height="300px" class="card-image"></v-img>
+            <v-card-title class="text-center">{{ event.title }}</v-card-title>
+            <v-card-subtitle class="text-center">
+              <div class="d-flex justify-center">
+                <v-icon>mdi-calendar</v-icon>
+                <span>{{ event.date }}</span>
+              </div></v-card-subtitle
+            >
+
+            <!-- Event Information -->
+            <v-card-text class="text-center">
+              <div class="d-flex justify-center">
+                <v-icon>mdi-map-marker</v-icon>
+                <span>{{ event.location }}</span>
+              </div>
+              <div class="d-flex justify-center mt-2">
+                <v-icon>mdi-tag</v-icon>
+                <span>{{ event.category }}</span>
+              </div>
+              <div class="d-flex justify-center mt-2">
+                <v-icon>mdi-information-outline</v-icon>
+                <span>{{ event.description }}</span>
+              </div>
+            </v-card-text>
+
+            <!-- Event Actions -->
+            <v-card-actions class="d-flex justify-center mt-auto">
+              <v-btn
+                :to="{ name: 'event-details', params: { id: event.id } }"
+                class="btn-details"
+                elevation="2"
+                rounded
+                text-uppercase
               >
+                Ver detalles
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -71,82 +138,94 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useEventsStore } from '@/store/index'
 
+// Datos para los filtros
 const searchQuery = ref('')
 const selectedCategory = ref(null)
 const selectedLocation = ref(null)
-const selectedDate = ref(null)
-const categories = ['Music', 'Sports', 'Art', 'Tech'] // Sample categories
-const locations = ['New York', 'Los Angeles', 'Chicago', 'San Francisco']
-const events = ref([
-  {
-    id: 1,
-    title: 'Music Festival',
-    date: '2024-11-01',
-    location: 'New York',
-    category: 'Music',
-    image: '/images/image1.avif',
-    description: 'Join us for an unforgettable music experience.',
-  },
-  {
-    id: 2,
-    title: 'Tech Conference',
-    date: '2024-11-15',
-    category: 'Tech',
-    location: 'San Francisco',
-    image: 'image2.jpg',
-    description: 'Latest trends in technology.',
-  },
-  {
-    id: 3,
-    title: 'Music Event',
-    date: '2024-11-15',
-    category: 'Music',
-    location: 'Los Angeles',
-    image: 'image2.jpg',
-    description: 'Latest trends in technology.',
-  },
-  {
-    id: 4,
-    title: 'Art Conference',
-    date: '2024-11-15',
-    category: 'Art',
-    location: 'San Francisco',
-    image: 'image2.jpg',
-    description: 'Latest trends in technology.',
-  },
-  // Add more event objects here
-])
+const startDate = ref('')
+const endDate = ref('')
 
+// Categorías relacionadas con eventos de segunda mano
+const categories = ['Ropa', 'Muebles', 'Tecnología', 'Varios']
+const locations = ['Madrid', 'Barcelona', 'Sevilla', 'Valencia']
+
+// Accedemos al store de eventos
+const eventsStore = useEventsStore()
+
+// Filtramos los eventos desde el store
 const filteredEvents = computed(() => {
-  return events.value.filter((event) => {
+  return eventsStore.allEvents.filter((event) => {
+    // Filtrar por título
     const matchesQuery = event.title
       .toLowerCase()
       .includes(searchQuery.value.toLowerCase())
+
+    // Filtrar por categoría
     const matchesCategory =
       !selectedCategory.value || event.category === selectedCategory.value
+
+    // Filtrar por ubicación
     const matchesLocation =
       !selectedLocation.value || event.location === selectedLocation.value
-    const matchesDate = !selectedDate.value || event.date === selectedDate.value
+
+    // Filtrar por rango de fechas (inicio y fin)
+    const eventDate = new Date(event.date)
+    const start = startDate.value ? new Date(startDate.value) : null
+    const end = endDate.value ? new Date(endDate.value) : null
+
+    const matchesDate =
+      (!start || eventDate >= start) && (!end || eventDate <= end)
+
     return matchesQuery && matchesCategory && matchesLocation && matchesDate
   })
 })
 
-function applyFilters() {
-  // Optional: Add additional filter logic here if needed
+// Restablece los filtros
+function resetFilters() {
+  searchQuery.value = ''
+  selectedCategory.value = null
+  selectedLocation.value = null
+  startDate.value = ''
+  endDate.value = ''
 }
 </script>
 
 <style scoped>
-.banner-container {
-  margin-bottom: 20px;
+.v-main {
+  padding-top: 10px;
+  padding-bottom: 50px;
 }
 
-.filter-container {
-  padding: 20px 0;
+.title {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #333;
 }
 
-.filter-input {
-  max-width: 200px;
+.event-card {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.card-image {
+  border-bottom: 2px solid #f5f5f5;
+}
+
+.btn-details {
+  font-weight: bold;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #ff8a65, #ff5252);
+  color: #fff;
+  transition: transform 0.2s;
+}
+
+.btn-details:hover {
+  transform: scale(1.05);
 }
 </style>
