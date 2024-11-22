@@ -1,29 +1,43 @@
 <template>
   <v-app>
     <v-app-bar app color="indigo" dark>
-      <v-toolbar-title @click="goToHome" class="toolbar-title-link"
-        >thriftHunter</v-toolbar-title
-      >
+      <v-toolbar-title @click="goToHome" class="toolbar-title-link">
+        thriftHunter
+      </v-toolbar-title>
 
       <v-spacer></v-spacer>
       <nav>
-        <RouterLink to="/" class="nav-link">Encuentra Eventos</RouterLink>
+        <RouterLink to="/" class="nav-link" active-class="nav-link-active"
+          >Encuentra Eventos</RouterLink
+        >
         <template v-if="loggedIn">
-          <RouterLink to="/account-create-event" class="nav-link"
-            >Crea un evento nuevo</RouterLink
+          <RouterLink
+            to="/create-event"
+            class="nav-link"
+            active-class="nav-link-active"
+            >Crear Evento</RouterLink
           >
-          <RouterLink to="/my-events" class="nav-link"
-            >Ver todos mis eventos</RouterLink
+          <RouterLink
+            to="/my-events"
+            class="nav-link"
+            active-class="nav-link-active"
+            >Ver mis eventos</RouterLink
           >
-          <a href="#" @click.prevent="loggedIn = false" class="nav-link"
-            >Log Out</a
-          >
+          <a href="#" @click.prevent="logout" class="nav-link">Log Out</a>
         </template>
         <template v-else>
-          <RouterLink to="/create-event" class="nav-link"
+          <RouterLink
+            to="/advantage-sign-in"
+            class="nav-link"
+            active-class="nav-link-active"
             >Crea tu Evento</RouterLink
           >
-          <RouterLink to="/login" class="nav-link">Log In</RouterLink>
+          <RouterLink
+            to="/login"
+            class="nav-link"
+            active-class="nav-link-active"
+            >Log In</RouterLink
+          >
         </template>
       </nav>
     </v-app-bar>
@@ -49,18 +63,16 @@
             <div class="footer-links">
               <RouterLink to="/" class="nav-link">Encuentra Eventos</RouterLink>
               <template v-if="loggedIn">
-                <RouterLink to="/account-create-event" class="nav-link"
+                <RouterLink to="/create-event" class="nav-link"
                   >Crea un evento nuevo</RouterLink
                 >
                 <RouterLink to="/my-events" class="nav-link"
                   >Ver todos mis eventos</RouterLink
                 >
-                <a href="#" @click.prevent="loggedIn = false" class="nav-link"
-                  >Log Out</a
-                >
+                <a href="#" @click.prevent="logout" class="nav-link">Log Out</a>
               </template>
               <template v-else>
-                <RouterLink to="/create-event" class="nav-link"
+                <RouterLink to="/advantage-sign-in" class="nav-link"
                   >Crea tu Evento</RouterLink
                 >
                 <RouterLink to="/login" class="nav-link">Log In</RouterLink>
@@ -91,10 +103,7 @@
 
         <v-row justify="center">
           <v-col class="text-center">
-            <p>
-              &copy; {{ new Date().getFullYear() }} thriftHunter. All rights
-              reserved.
-            </p>
+            <p>&copy; {{ currentYear }} thriftHunter. All rights reserved.</p>
           </v-col>
         </v-row>
       </v-container>
@@ -136,12 +145,14 @@
     left 0.3s ease;
 }
 
-.nav-link:hover {
+.nav-link:hover,
+.nav-link-active {
   color: #ffcc00;
   transform: scale(1.1);
 }
 
-.nav-link:hover::after {
+.nav-link:hover::after,
+.nav-link-active::after {
   width: 100%;
   left: 0;
 }
@@ -168,15 +179,20 @@
 import { RouterLink, RouterView, useRouter } from 'vue-router'
 import { ref } from 'vue'
 
-const router = useRouter() // Access the router instance
+const router = useRouter()
 const loggedIn = ref(false)
 
 const goToHome = () => {
-  router.push({ name: 'home' }) // Navigate to the Home page route by name
+  router.push({ name: 'home' })
 }
 
 const handleLoginSuccess = () => {
-  loggedIn.value = true // Set logged in status to true
+  loggedIn.value = true
+}
+
+const logout = () => {
+  loggedIn.value = false
+  router.push({ name: 'home' })
 }
 
 const currentYear = ref(new Date().getFullYear())
