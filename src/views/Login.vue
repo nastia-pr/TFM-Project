@@ -33,7 +33,6 @@
               class="custom-input"
             ></v-text-field>
 
-            <!-- Enlace para Olvidaste tu contraseña -->
             <a
               href="#"
               @click.prevent="goToForgotPassword"
@@ -46,7 +45,7 @@
               :disabled="!valid"
               color="primary"
               block
-              @click="submitLogin"
+              type="submit"
               class="custom-btn"
             >
               Iniciar sesión
@@ -70,6 +69,9 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+// Declarar `emit` al inicio
+const emit = defineEmits(['login-success'])
+
 const router = useRouter()
 
 // Reactive state variables
@@ -86,8 +88,6 @@ function submitLogin() {
     username.value === hardcodedUsername &&
     password.value === hardcodedPassword
   ) {
-    // Emit the login-success event
-    const emit = defineEmits(['login-success'])
     emit('login-success')
 
     // Navigate to the account page if credentials match
@@ -95,6 +95,10 @@ function submitLogin() {
   } else {
     alert('Invalid credentials. Please try again.')
   }
+}
+
+function goToForgotPassword() {
+  alert('Redirigir a la página de recuperación de contraseña.')
 }
 
 function goToCreateAccount() {
