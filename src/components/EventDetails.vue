@@ -1,25 +1,21 @@
 <template>
   <v-container>
     <v-card class="event-card">
-      <!-- Event Image -->
       <v-img :src="event.image" alt="Event Image" class="event-image"></v-img>
-
-      <!-- Event Title and Attend Button -->
       <v-card-title class="event-header">
         <span class="event-title">{{ event.title }}</span>
-        <v-btn color="grey" class="attend-button">Quiero asistir</v-btn>
       </v-card-title>
-
-      <!-- Event Details -->
       <v-card-text>
         <div class="event-section">
           <h3>Resumen</h3>
           <p>{{ event.description }}</p>
         </div>
         <div class="event-section">
-          <h3>Data y hora</h3>
+          <h3>Fecha y hora</h3>
           <p>{{ event.date }}</p>
-          <v-btn text>Add to calendar</v-btn>
+          <v-btn text @click="addToGoogleCalendar(event)"
+            >Add to calendar</v-btn
+          >
         </div>
         <div class="event-section">
           <h3>Ubicación</h3>
@@ -28,15 +24,13 @@
         </div>
         <div class="event-section">
           <h3>Organizador</h3>
-          <p>Información sobre el organizador</p>
+          <p>{{ event.organizer }}</p>
         </div>
         <div class="event-section">
           <h3>Sobre el evento</h3>
-          <p>Más detalles sobre el evento</p>
+          <p>{{ event.eventDetails }}</p>
         </div>
       </v-card-text>
-
-      <!-- Back Button -->
       <v-card-actions>
         <v-btn text @click="$router.push('/')"
           >Volver a la lista de Eventos</v-btn
@@ -47,35 +41,31 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useEventsStore } from '@/store/index'
 
 const route = useRoute()
-const event = ref({})
+const eventsStore = useEventsStore()
 
-onMounted(() => {
-  const eventId = route.params.id
-  const events = [
-    {
-      id: 1,
-      title: 'Music Festival',
-      location: 'New York',
-      date: '2024-11-01',
-      image: '/images/image1.avif',
-      description: 'Join us for an unforgettable music experience.',
-    },
-    {
-      id: 2,
-      title: 'Tech Conference',
-      location: 'San Francisco',
-      date: '2024-11-15',
-      image: 'image2.jpg',
-      description: 'Latest trends in technology.',
-    },
-  ]
+// Obtener el evento por ID usando el store
+const event = eventsStore.getEventById(Number(route.params.id))
 
-  event.value = events.find((e) => e.id === Number(eventId))
-})
+function addToGoogleCalendar(event) {
+  const baseUrl = 'https://calendar.google.com/calendar/render'
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: event.title,
+    dates: `${event.date.replace(/-/g, '')}T120000Z/${event.date.replace(
+      /-/g,
+      ''
+    )}T130000Z`,
+    details: event.description,
+    location: event.location,
+  }).toString()
+
+  const url = `${baseUrl}?${params}`
+  window.open(url, '_blank')
+}
 </script>
 
 <style scoped>
