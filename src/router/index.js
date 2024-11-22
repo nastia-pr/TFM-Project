@@ -19,7 +19,7 @@ const router = createRouter({
       component: () => import('../views/AdvantagesSignIn.vue'),
     },
     {
-      path: '/event/:id', // Dynamic route for event details
+      path: '/event-details/:id', // Dynamic route for event details
       name: 'event-details',
       component: EventDetails,
     },
