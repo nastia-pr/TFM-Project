@@ -49,6 +49,9 @@ const router = createRouter({
       component: () => import('../views/myEvents.vue'), // Lazy-loaded login component
     },
   ],
+  scrollBehavior() {
+    return { top: 0 } // Desplazar al inicio de la página
+  },
 })
 
 export default router
