@@ -73,31 +73,32 @@
   </v-container>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      username: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      valid: false,
-    }
-  },
-  methods: {
-    submitRegister() {
-      // Lógica de creación de cuenta
-      console.log(
-        'Creando cuenta con:',
-        this.username,
-        this.email,
-        this.password
-      )
-    },
-    goToLogin() {
-      this.$router.push({ name: 'login' })
-    },
-  },
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+// Reactive state variables
+const username = ref('')
+const email = ref('')
+const password = ref('')
+const confirmPassword = ref('')
+const valid = ref(false)
+
+// Methods
+function submitRegister() {
+  // Account creation logic
+  console.log(
+    'Creating account with:',
+    username.value,
+    email.value,
+    password.value
+  )
+}
+
+function goToLogin() {
+  router.push({ name: 'login' })
 }
 </script>
 
