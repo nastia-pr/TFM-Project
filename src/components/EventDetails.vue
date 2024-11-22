@@ -20,7 +20,20 @@
         <div class="event-section">
           <h3>Ubicación</h3>
           <p>{{ event.location }}</p>
-          <v-btn text>Show map</v-btn>
+          <v-btn text @click="toggleMap">Show map</v-btn>
+
+          <div v-if="showMapSection" class="map-section">
+            <iframe
+              :src="`https://www.google.com/maps?q=${encodeURIComponent(event.location)}&output=embed`"
+              width="100%"
+              height="400"
+              frameborder="0"
+              style="border: 0"
+              allowfullscreen
+              aria-hidden="false"
+              tabindex="0"
+            ></iframe>
+          </div>
         </div>
         <div class="event-section">
           <h3>Organizador</h3>
@@ -41,11 +54,13 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useEventsStore } from '@/store/index'
 
 const route = useRoute()
 const eventsStore = useEventsStore()
+const showMapSection = ref(false)
 
 // Obtener el evento por ID usando el store
 const event = eventsStore.getEventById(Number(route.params.id))
@@ -65,6 +80,9 @@ function addToGoogleCalendar(event) {
 
   const url = `${baseUrl}?${params}`
   window.open(url, '_blank')
+}
+function toggleMap() {
+  showMapSection.value = !showMapSection.value
 }
 </script>
 
