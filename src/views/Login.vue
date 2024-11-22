@@ -66,35 +66,39 @@
   </v-container>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      username: '',
-      password: '',
-      valid: false,
-    }
-  },
-  methods: {
-    submitLogin() {
-      const hardcodedUsername = 'user'
-      const hardcodedPassword = 'password123'
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
-      if (
-        this.username === hardcodedUsername &&
-        this.password === hardcodedPassword
-      ) {
-        this.$emit('login-success')
-        // Navigate to the account page if credentials match
-        this.$router.push({ name: 'account-create-event' })
-      } else {
-        alert('Invalid credentials. Please try again.')
-      }
-    },
-    goToCreateAccount() {
-      this.$router.push({ name: 'create-account' })
-    },
-  },
+const router = useRouter()
+
+// Reactive state variables
+const username = ref('')
+const password = ref('')
+const valid = ref(false)
+
+// Methods
+function submitLogin() {
+  const hardcodedUsername = 'user'
+  const hardcodedPassword = 'password123'
+
+  if (
+    username.value === hardcodedUsername &&
+    password.value === hardcodedPassword
+  ) {
+    // Emit the login-success event
+    const emit = defineEmits(['login-success'])
+    emit('login-success')
+
+    // Navigate to the account page if credentials match
+    router.push({ name: 'account-welcome' })
+  } else {
+    alert('Invalid credentials. Please try again.')
+  }
+}
+
+function goToCreateAccount() {
+  router.push({ name: 'create-account' })
 }
 </script>
 
