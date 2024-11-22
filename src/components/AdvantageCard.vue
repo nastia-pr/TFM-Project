@@ -7,23 +7,23 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    text: {
-      type: String,
-      required: true,
-    },
-    delay: {
-      type: Number,
-      default: 0,
-    },
-    color: {
-      type: String,
-      required: true,
-    },
+<script setup>
+import { defineProps } from 'vue'
+
+defineProps({
+  text: {
+    type: String,
+    required: true,
   },
-}
+  delay: {
+    type: Number,
+    default: 0,
+  },
+  color: {
+    type: String,
+    required: true,
+  },
+})
 </script>
 
 <style scoped>

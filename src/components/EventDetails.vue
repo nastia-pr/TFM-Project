@@ -1,14 +1,46 @@
 <template>
   <v-container>
-    <v-card>
-      <v-card-title>{{ event.title }}</v-card-title>
-      <v-card-subtitle>{{ event.date }} | {{ event.location }}</v-card-subtitle>
+    <v-card class="event-card">
+      <!-- Event Image -->
+      <v-img :src="event.image" alt="Event Image" class="event-image"></v-img>
+
+      <!-- Event Title and Attend Button -->
+      <v-card-title class="event-header">
+        <span class="event-title">{{ event.title }}</span>
+        <v-btn color="grey" class="attend-button">Quiero asistir</v-btn>
+      </v-card-title>
+
+      <!-- Event Details -->
       <v-card-text>
-        <img :src="event.image" alt="Event Image" class="event-image" />
-        <p>{{ event.description }}</p>
+        <div class="event-section">
+          <h3>Resumen</h3>
+          <p>{{ event.description }}</p>
+        </div>
+        <div class="event-section">
+          <h3>Data y hora</h3>
+          <p>{{ event.date }}</p>
+          <v-btn text>Add to calendar</v-btn>
+        </div>
+        <div class="event-section">
+          <h3>Ubicación</h3>
+          <p>{{ event.location }}</p>
+          <v-btn text>Show map</v-btn>
+        </div>
+        <div class="event-section">
+          <h3>Organizador</h3>
+          <p>Información sobre el organizador</p>
+        </div>
+        <div class="event-section">
+          <h3>Sobre el evento</h3>
+          <p>Más detalles sobre el evento</p>
+        </div>
       </v-card-text>
+
+      <!-- Back Button -->
       <v-card-actions>
-        <v-btn @click="$router.push('/')">Back to Events</v-btn>
+        <v-btn text @click="$router.push('/')"
+          >Volver a la lista de Eventos</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-container>
@@ -22,9 +54,7 @@ const route = useRoute()
 const event = ref({})
 
 onMounted(() => {
-  // Assuming events are stored globally or fetched from an API
   const eventId = route.params.id
-  // Replace with your event fetching logic
   const events = [
     {
       id: 1,
@@ -42,17 +72,41 @@ onMounted(() => {
       image: 'image2.jpg',
       description: 'Latest trends in technology.',
     },
-    // Add more events as needed
   ]
 
-  // Find the event by ID
   event.value = events.find((e) => e.id === Number(eventId))
 })
 </script>
 
 <style scoped>
+.event-card {
+  max-width: 800px;
+  margin: auto;
+}
 .event-image {
-  max-width: 100%;
-  height: auto;
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  margin-bottom: 20px;
+}
+.event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.event-title {
+  font-size: 1.8em;
+  font-weight: bold;
+}
+.attend-button {
+  background-color: lightgrey;
+  color: black;
+}
+.event-section {
+  margin-bottom: 15px;
+}
+.event-section h3 {
+  font-weight: bold;
+  margin-bottom: 5px;
 }
 </style>
