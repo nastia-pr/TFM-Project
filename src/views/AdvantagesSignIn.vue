@@ -32,18 +32,14 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { useRouter } from 'vue-router'
 import AdvantageCard from '@/components/AdvantageCard.vue'
 
-export default {
-  components: {
-    AdvantageCard,
-  },
-  methods: {
-    goToCreateAccount() {
-      this.$router.push({ name: 'create-account' }) // Redirige a la ruta de login
-    },
-  },
+const router = useRouter()
+
+function goToCreateAccount() {
+  router.push({ name: 'create-account' }) // Redirects to the 'create-account' route
 }
 </script>
 
