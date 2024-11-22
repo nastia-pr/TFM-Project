@@ -11,8 +11,8 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: '/create-event',
-      name: 'create-event',
+      path: '/advantage-sign-in',
+      name: 'advantages-sign-in',
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
@@ -34,9 +34,19 @@ const router = createRouter({
       component: () => import('../views/CreateAccount.vue'), // Lazy-loaded login component
     },
     {
-      path: '/account-create.event', // New route for login page
-      name: 'account-create-event',
-      component: () => import('../views/AccountCreateEvent.vue'), // Lazy-loaded login component
+      path: '/account-welcome', // New route for login page
+      name: 'account-welcome',
+      component: () => import('../views/AccountWelcome.vue'), // Lazy-loaded login component
+    },
+    {
+      path: '/create-event', // New route for login page
+      name: 'create-event',
+      component: () => import('../views/CreateEvent.vue'), // Lazy-loaded login component
+    },
+    {
+      path: '/my-events', // New route for login page
+      name: 'my-events',
+      component: () => import('../views/myEvents.vue'), // Lazy-loaded login component
     },
   ],
 })
