@@ -11,7 +11,7 @@ export const useEventsStore = defineStore('events', {
         category: 'Ropa',
         image: '/images/event1.avif',
         description: 'Explora prendas únicas a precios increíbles.',
-        organizer: 'Organizador 1', // Información del organizador
+        organizer: 'Organizador 1',
         eventDetails:
           'Este es un evento de ropa usada donde podrás encontrar una variedad de prendas a precios accesibles.', // Detalles del evento
       },
