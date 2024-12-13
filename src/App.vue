@@ -53,7 +53,7 @@
             <p>thriftHunter</p>
             <p>
               Contact:
-              <a href="mailto:info@thriftHunter.com" class="footer-link"
+              <a href="mailto:info@thriftHunter.com" class="email-link"
                 >info@thriftHunter.com</a
               >
             </p>
@@ -172,6 +172,10 @@
   flex-direction: column;
   align-items: center;
   gap: 10px; /* Optional: center the links horizontally */
+}
+
+.email-link {
+  color: white;
 }
 </style>
 
