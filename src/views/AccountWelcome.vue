@@ -16,7 +16,9 @@
 
     <!-- Instrucciones de cómo crear un evento -->
     <v-card class="instructions-card" outlined>
-      <v-card-title>Cómo crear un evento</v-card-title>
+      <v-card-title class="instructions-title"
+        >Cómo crear un evento</v-card-title
+      >
       <v-card-text>
         <ul class="instructions-list">
           <li>
@@ -55,22 +57,28 @@ defineOptions({
 .account-container {
   padding: 50px;
   text-align: center;
+  background-color: #ebeaea;
 }
 
 .account-title {
   font-size: 2rem;
   margin-bottom: 16px;
+  font-weight: bold;
+  color: #3f51b5;
 }
 
 .account-info {
   font-size: 1.2rem;
-  color: #666;
-  margin-bottom: 32px;
+  color: #757575;
+  margin-bottom: 30px;
 }
 
 .create-event-btn {
   margin-top: 20px;
   margin-bottom: 40px;
+  border-radius: 10px;
+  padding: 12px 30px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .instructions-card {
@@ -79,6 +87,16 @@ defineOptions({
   padding: 20px;
   text-align: left;
   background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.instructions-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #3f51b5;
+  margin-bottom: 15px;
+  text-align: center;
 }
 
 .instructions-list {
@@ -90,5 +108,8 @@ defineOptions({
   margin-bottom: 10px;
   font-size: 1.1rem;
   line-height: 1.6;
+}
+.instructions-list strong {
+  color: #3f51b5;
 }
 </style>

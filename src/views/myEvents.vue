@@ -1,28 +1,31 @@
 <template>
   <v-container class="see-my-events-container" fluid>
+    <!-- Header Section -->
     <v-card class="header-card" outlined>
-      <v-card-title class="text-center">Mis Eventos Publicados</v-card-title>
+      <v-card-title class="text-center header-title">
+        Mis Eventos Publicados
+      </v-card-title>
       <p class="subtitle">
         Aquí puedes ver todos los eventos que has creado y publicado.
       </p>
     </v-card>
 
-    <!-- Lista de Eventos Publicados -->
-    <v-row>
+    <!-- Event Cards -->
+    <v-row class="event-list">
       <v-col v-for="event in events" :key="event.id" cols="12" sm="6" md="4">
         <v-card class="event-card" outlined>
-          <!-- Imagen del evento -->
-          <v-img :src="event.image" height="200px"></v-img>
+          <!-- Event Image -->
+          <v-img :src="event.image" class="event-image" height="200px"></v-img>
 
-          <!-- Detalles del evento -->
-          <v-card-title>{{ event.title }}</v-card-title>
-          <v-card-subtitle
-            >{{ event.date }} | {{ event.location }}</v-card-subtitle
-          >
-          <v-card-text>{{ event.summary }}</v-card-text>
+          <!-- Event Details -->
+          <v-card-title class="event-title">{{ event.title }}</v-card-title>
+          <v-card-subtitle class="event-subtitle">
+            {{ event.date }} | {{ event.location }}
+          </v-card-subtitle>
+          <v-card-text class="event-summary">{{ event.summary }}</v-card-text>
 
-          <!-- Botones de acción -->
-          <v-card-actions>
+          <!-- Action Buttons -->
+          <v-card-actions class="card-actions">
             <v-btn color="primary" @click="viewEvent(event.id)">
               Ver Detalles
             </v-btn>
@@ -79,21 +82,72 @@ function deleteEvent(eventId) {
 <style scoped>
 .see-my-events-container {
   padding: 20px;
+  background-color: #ebeaea;
 }
 
 .header-card {
-  padding: 20px;
-  background-color: #f5f5f5;
   margin-bottom: 20px;
+  background-color: #3f51b5;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.header-title {
+  font-size: 24px;
+  font-weight: bold;
 }
 
 .subtitle {
-  text-align: center;
-  color: #666;
-  margin-top: -10px;
+  font-size: 16px;
+  color: #ffffffb3;
+}
+
+.event-list {
+  margin-top: 20px;
 }
 
 .event-card {
-  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.event-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+.event-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.event-subtitle {
+  color: #757575;
+  font-size: 14px;
+}
+
+.event-summary {
+  font-size: 14px;
+  color: #616161;
+  margin: 10px 0;
+}
+
+.card-actions {
+  justify-content: space-between;
+}
+
+.v-btn {
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.v-btn:hover {
+  opacity: 0.9;
 }
 </style>

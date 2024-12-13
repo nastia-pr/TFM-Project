@@ -110,7 +110,7 @@
 
       <!-- Botón de guardar y publicar -->
       <v-card-actions class="justify-center">
-        <v-btn color="primary" @click="saveEvent"> Guardar y Publicar </v-btn>
+        <v-btn @click="saveEvent"> Guardar y Publicar </v-btn>
       </v-card-actions>
     </v-card>
   </v-container>
@@ -135,27 +135,63 @@ function saveEvent() {
   padding: 20px;
   display: flex;
   justify-content: center;
+  background-color: #ebeaea;
 }
 
 .create-event-card {
   max-width: 800px;
   padding: 20px;
   background-color: #f9f9f9;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 
 .title {
   font-size: 1.8rem;
   margin-bottom: 10px;
+  color: #3f51b5;
 }
 
 .subtitle {
   text-align: center;
   font-size: 1.2rem;
-  color: #666;
+  color: #555;
   margin-bottom: 20px;
 }
 
-.date-location {
+.date-location .v-col {
+  margin-bottom: 16px;
+}
+
+.v-file-input,
+.v-text-field,
+.v-textarea,
+.v-date-picker,
+.v-time-picker {
+  margin-bottom: 16px;
+}
+
+.v-checkbox {
+  margin: 16px 0;
+}
+
+.map-section {
+  margin-top: 20px;
+}
+
+.v-btn {
+  font-size: 16px;
+  text-transform: uppercase;
+  font-weight: bold;
+  background-color: #3f51b5;
+  color: white;
+}
+
+.v-btn:hover {
+  background-color: rgb(28, 133, 224);
+}
+
+.justify-center {
   margin-top: 20px;
 }
 </style>

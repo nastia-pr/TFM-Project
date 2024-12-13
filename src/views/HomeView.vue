@@ -91,40 +91,53 @@
           md="4"
           class="d-flex"
         >
-          <v-card class="event-card d-flex flex-column">
-            <v-img :src="event.image" height="300px" class="card-image"></v-img>
-            <v-card-title class="text-center">{{ event.title }}</v-card-title>
-            <v-card-subtitle class="text-center">
-              <div class="d-flex justify-center">
-                <v-icon>mdi-calendar</v-icon>
-                <span>{{ event.date }}</span>
-              </div></v-card-subtitle
-            >
+          <v-card
+            class="event-card d-flex flex-column hover-card"
+            elevation="4"
+          >
+            <!-- Event Image -->
+            <v-img
+              :src="event.image"
+              height="200px"
+              class="card-image"
+              aspect-ratio="16/9"
+              cover
+            ></v-img>
 
-            <!-- Event Information -->
-            <v-card-text class="text-center">
-              <div class="d-flex justify-center">
-                <v-icon>mdi-map-marker</v-icon>
+            <!-- Event Title -->
+            <v-card-title class="font-weight-bold">
+              {{ event.title }}
+            </v-card-title>
+
+            <!-- Event Details -->
+            <v-card-text>
+              <div class="d-flex align-items-center mb-2">
+                <v-icon class="mr-2 text-primary">mdi-calendar</v-icon>
+                <span>{{ event.date }}</span>
+              </div>
+              <div class="d-flex align-items-center mb-2">
+                <v-icon class="mr-2 text-primary">mdi-map-marker</v-icon>
                 <span>{{ event.location }}</span>
               </div>
-              <div class="d-flex justify-center mt-2">
-                <v-icon>mdi-tag</v-icon>
+              <div class="d-flex align-items-center">
+                <v-icon class="mr-2 text-primary">mdi-tag</v-icon>
                 <span>{{ event.category }}</span>
-              </div>
-              <div class="d-flex justify-center mt-2">
-                <v-icon>mdi-information-outline</v-icon>
-                <span>{{ event.description }}</span>
               </div>
             </v-card-text>
 
+            <!-- Event Description -->
+            <v-card-text class="event-description mt-2">
+              {{ event.description }}
+            </v-card-text>
+
             <!-- Event Actions -->
-            <v-card-actions class="d-flex justify-center mt-auto">
+            <v-card-actions class="d-flex justify-end mt-auto">
               <v-btn
                 :to="{ name: 'event-details', params: { id: event.id } }"
-                class="btn-details"
                 elevation="2"
                 rounded
                 text-uppercase
+                class="btn-details"
               >
                 Ver detalles
               </v-btn>
@@ -204,6 +217,11 @@ function resetFilters() {
   color: #333;
 }
 
+.v-card-subtitle {
+  color: #757575;
+  font-size: 0.9rem;
+}
+
 .event-card {
   height: 100%;
   width: 100%;
@@ -211,21 +229,57 @@ function resetFilters() {
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
+  border-radius: 12px;
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
+}
+
+.event-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .card-image {
   border-bottom: 2px solid #f5f5f5;
 }
+.event-description {
+  font-size: 0.9rem;
+  color: #616161;
+  line-height: 1.4;
+}
+
+.hover-card:hover .card-image {
+  filter: brightness(1.1);
+}
 
 .btn-details {
   font-weight: bold;
   padding: 10px 20px;
-  background: linear-gradient(135deg, #ff8a65, #ff5252);
+  background-color: #3f51b5;
   color: #fff;
-  transition: transform 0.2s;
+}
+
+.v-card-title {
+  font-size: 1.25rem;
 }
 
 .btn-details:hover {
-  transform: scale(1.05);
+  background-color: #303f9f;
+}
+
+.v-card-title {
+  font-size: 1.2rem;
+  color: #212121;
+  margin-bottom: 8px;
+}
+
+.v-card-text {
+  font-size: 0.95rem;
+  color: #424242;
+}
+
+.v-card-actions {
+  margin-top: 16px;
 }
 </style>
