@@ -75,7 +75,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 // Declarar `emit` al inicio
@@ -90,8 +90,20 @@ const valid = ref(false)
 const showPassword = ref(false)
 const isMobile = ref(false)
 
-window.addEventListener('resize', () => {
-  isMobile.value = window.innerWidth < 600
+// Function to check screen size and update `isMobile`
+const checkMobile = () => {
+  isMobile.value = window.innerWidth <= 600 // 600px is a common breakpoint for mobile screens
+}
+
+// Run the check when the component is mounted
+onMounted(() => {
+  checkMobile() // Check the screen size immediately on mount
+  window.addEventListener('resize', checkMobile) // Listen for resize events
+})
+
+// Clean up the event listener when the component is unmounted
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
 })
 
 // Methods
