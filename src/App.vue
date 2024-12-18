@@ -6,10 +6,12 @@
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
-      <nav>
-        <RouterLink to="/" class="nav-link" active-class="nav-link-active"
-          >Encuentra Eventos</RouterLink
-        >
+
+      <!-- Menú para pantallas grandes -->
+      <nav class="d-none d-sm-flex">
+        <RouterLink to="/" class="nav-link" active-class="nav-link-active">
+          Encuentra Eventos
+        </RouterLink>
         <template v-if="loggedIn">
           <RouterLink
             to="/create-event"
@@ -40,6 +42,54 @@
           >
         </template>
       </nav>
+
+      <!-- Menú para pantallas pequeñas -->
+      <v-menu v-if="!isDesktop" offset-y>
+        <template #activator="{ props }">
+          <v-btn v-bind="props" icon>
+            <v-icon>mdi-menu</v-icon>
+          </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item>
+            <RouterLink to="/" class="nav-link mobile"
+              >Encuentra Eventos</RouterLink
+            >
+          </v-list-item>
+
+          <template v-if="loggedIn">
+            <v-list-item>
+              <RouterLink to="/create-event" class="nav-link mobile"
+                >Crear Evento</RouterLink
+              >
+            </v-list-item>
+            <v-list-item>
+              <RouterLink to="/my-events" class="nav-link mobile"
+                >Ver mis eventos</RouterLink
+              >
+            </v-list-item>
+            <v-list-item>
+              <a href="#" @click.prevent="logout" class="nav-link mobile"
+                >Log Out</a
+              >
+            </v-list-item>
+          </template>
+
+          <template v-else>
+            <v-list-item>
+              <RouterLink to="/advantage-sign-in" class="nav-link mobile"
+                >Crea tu Evento</RouterLink
+              >
+            </v-list-item>
+            <v-list-item>
+              <RouterLink to="/login" class="nav-link mobile"
+                >Log In</RouterLink
+              >
+            </v-list-item>
+          </template>
+        </v-list>
+      </v-menu>
     </v-app-bar>
 
     <v-main>
@@ -132,6 +182,10 @@
     transform 0.3s ease;
 }
 
+.nav-link.mobile {
+  color: #303f9f;
+}
+
 .nav-link::after {
   content: '';
   position: absolute;
@@ -181,10 +235,21 @@
 
 <script setup>
 import { RouterLink, RouterView, useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 const router = useRouter()
 const loggedIn = ref(false)
+const isDesktop = ref(true)
+
+// Detectar el tamaño de la ventana
+const updateWindowSize = () => {
+  isDesktop.value = window.innerWidth >= 600 // Tamaño de pantalla para considerar escritorio
+}
+
+onMounted(() => {
+  updateWindowSize()
+  window.addEventListener('resize', updateWindowSize) // Actualiza cuando se cambia el tamaño
+})
 
 const goToHome = () => {
   router.push({ name: 'home' })
