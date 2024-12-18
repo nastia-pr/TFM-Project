@@ -15,7 +15,7 @@
             <v-text-field
               v-model="username"
               label="Nombre de usuario"
-              prepend-icon="mdi-account"
+              :prepend-icon="isMobile ? '' : 'mdi-account'"
               :rules="[(v) => !!v || 'El nombre de usuario es requerido']"
               required
               class="custom-input"
@@ -24,7 +24,7 @@
             <v-text-field
               v-model="email"
               label="Correo electrónico"
-              prepend-icon="mdi-email"
+              :prepend-icon="isMobile ? '' : 'mdi-email'"
               :rules="[
                 (v) => !!v || 'El correo electrónico es requerido',
                 (v) => /.+@.+\..+/.test(v) || 'El correo no es válido',
@@ -36,22 +36,40 @@
             <v-text-field
               v-model="password"
               label="Contraseña"
-              type="password"
-              prepend-icon="mdi-lock"
+              :type="showPassword.password ? 'text' : 'password'"
+              :prepend-icon="isMobile ? '' : 'mdi-lock'"
               :rules="[(v) => !!v || 'La contraseña es requerida']"
               required
               class="custom-input"
-            ></v-text-field>
+            >
+              <template #append>
+                <v-icon
+                  @click="togglePasswordVisibility('password')"
+                  class="show-password-icon"
+                >
+                  {{ showPassword.password ? 'mdi-eye-off' : 'mdi-eye' }}
+                </v-icon>
+              </template>
+            </v-text-field>
 
             <v-text-field
               v-model="confirmPassword"
               label="Confirmar contraseña"
-              type="password"
-              prepend-icon="mdi-lock"
+              :type="showPassword.confirm ? 'text' : 'password'"
+              :prepend-icon="isMobile ? '' : 'mdi-lock'"
               :rules="[(v) => v === password || 'Las contraseñas no coinciden']"
               required
               class="custom-input"
-            ></v-text-field>
+            >
+              <template #append>
+                <v-icon
+                  @click="togglePasswordVisibility('confirm')"
+                  class="show-password-icon"
+                >
+                  {{ showPassword.confirm ? 'mdi-eye-off' : 'mdi-eye' }}
+                </v-icon>
+              </template>
+            </v-text-field>
 
             <v-btn
               :disabled="!valid"
@@ -85,6 +103,15 @@ const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 const valid = ref(false)
+const isMobile = ref(false)
+const showPassword = ref({
+  password: false, // Track password visibility
+  confirm: false, // Track confirm password visibility
+})
+
+window.addEventListener('resize', () => {
+  isMobile.value = window.innerWidth < 600
+})
 
 // Methods
 function submitRegister() {
@@ -99,6 +126,10 @@ function submitRegister() {
 
 function goToLogin() {
   router.push({ name: 'login' })
+}
+
+function togglePasswordVisibility(field) {
+  showPassword.value[field] = !showPassword.value[field]
 }
 </script>
 

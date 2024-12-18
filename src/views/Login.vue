@@ -17,7 +17,7 @@
             <v-text-field
               v-model="username"
               label="Nombre de usuario"
-              prepend-icon="mdi-account"
+              :prepend-icon="isMobile ? '' : 'mdi-account'"
               :rules="[(v) => !!v || 'El nombre de usuario es requerido']"
               required
               class="custom-input"
@@ -26,12 +26,21 @@
             <v-text-field
               v-model="password"
               label="Contraseña"
-              type="password"
-              prepend-icon="mdi-lock"
+              :type="showPassword ? 'text' : 'password'"
+              :prepend-icon="isMobile ? '' : 'mdi-lock'"
               :rules="[(v) => !!v || 'La contraseña es requerida']"
               required
               class="custom-input"
-            ></v-text-field>
+            >
+              <template #append>
+                <v-icon
+                  @click="togglePasswordVisibility"
+                  class="show-password-icon"
+                >
+                  {{ showPassword ? 'mdi-eye-off' : 'mdi-eye' }}
+                </v-icon>
+              </template>
+            </v-text-field>
 
             <a
               href="#"
@@ -78,6 +87,12 @@ const router = useRouter()
 const username = ref('')
 const password = ref('')
 const valid = ref(false)
+const showPassword = ref(false)
+const isMobile = ref(false)
+
+window.addEventListener('resize', () => {
+  isMobile.value = window.innerWidth < 600
+})
 
 // Methods
 function submitLogin() {
@@ -103,6 +118,10 @@ function goToForgotPassword() {
 
 function goToCreateAccount() {
   router.push({ name: 'create-account' })
+}
+
+function togglePasswordVisibility() {
+  showPassword.value = !showPassword.value
 }
 </script>
 

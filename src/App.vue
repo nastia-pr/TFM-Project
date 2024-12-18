@@ -51,7 +51,7 @@
           </v-btn>
         </template>
 
-        <v-list>
+        <v-list class="mobile-menu-list">
           <v-list-item>
             <RouterLink to="/" class="nav-link mobile"
               >Encuentra Eventos</RouterLink
@@ -99,7 +99,8 @@
     <v-footer color="indigo darken-3">
       <v-container>
         <v-row align="center" justify="space-between">
-          <v-col class="text-left">
+          <!-- Left Section -->
+          <v-col class="text-center" cols="12" sm="4" md="3">
             <p>thriftHunter</p>
             <p>
               Contact:
@@ -109,7 +110,8 @@
             </p>
           </v-col>
 
-          <v-col class="text-center">
+          <!-- Center Section with links -->
+          <v-col class="text-center" cols="12" sm="4" md="5">
             <div class="footer-links">
               <RouterLink to="/" class="nav-link">Encuentra Eventos</RouterLink>
               <template v-if="loggedIn">
@@ -130,7 +132,8 @@
             </div>
           </v-col>
 
-          <v-col class="text-right">
+          <!-- Right Section with social icons -->
+          <v-col class="text-right" cols="12" sm="4" md="3">
             <a
               href="https://www.facebook.com"
               target="_blank"
@@ -151,8 +154,9 @@
           </v-col>
         </v-row>
 
+        <!-- Footer bottom section -->
         <v-row justify="center">
-          <v-col class="text-center">
+          <v-col class="text-center" cols="12">
             <p>&copy; {{ currentYear }} thriftHunter. All rights reserved.</p>
           </v-col>
         </v-row>
@@ -184,6 +188,8 @@
 
 .nav-link.mobile {
   color: #303f9f;
+  font-size: 1.2rem; /* Larger font size */
+  padding: 15px 20px;
 }
 
 .nav-link::after {
