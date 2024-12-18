@@ -105,29 +105,24 @@ const confirmPassword = ref('')
 const valid = ref(false)
 const isMobile = ref(false)
 const showPassword = ref({
-  password: false, // Track password visibility
-  confirm: false, // Track confirm password visibility
+  password: false,
+  confirm: false,
 })
 
-// Function to check screen size and update `isMobile`
 const checkMobile = () => {
-  isMobile.value = window.innerWidth <= 600 // 600px is a common breakpoint for mobile screens
+  isMobile.value = window.innerWidth <= 600
 }
 
-// Run the check when the component is mounted
 onMounted(() => {
-  checkMobile() // Check the screen size immediately on mount
-  window.addEventListener('resize', checkMobile) // Listen for resize events
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
 })
 
-// Clean up the event listener when the component is unmounted
 onUnmounted(() => {
   window.removeEventListener('resize', checkMobile)
 })
 
-// Methods
 function submitRegister() {
-  // Account creation logic
   console.log(
     'Creating account with:',
     username.value,
@@ -148,7 +143,7 @@ function togglePasswordVisibility(field) {
 <style scoped>
 .register-container {
   padding: 40px;
-  background-color: #f7f9fc; /* Fondo claro */
+  background-color: #f7f9fc;
 }
 
 .v-card {
@@ -166,33 +161,33 @@ function togglePasswordVisibility(field) {
 }
 
 .custom-input {
-  margin-bottom: 20px; /* Espaciado entre los campos */
+  margin-bottom: 20px;
 }
 
 .custom-btn {
   margin-top: 20px;
-  background-color: #42a5f5; /* Azul claro */
+  background-color: #42a5f5;
   color: white;
   font-weight: bold;
   transition: background-color 0.3s ease;
 }
 
 .custom-btn:hover {
-  background-color: #1e88e5; /* Azul más oscuro en hover */
+  background-color: #1e88e5;
 }
 
 .custom-btn-link {
   display: block;
   text-align: center;
   margin-top: 15px;
-  color: #1976d2; /* Azul oscuro */
+  color: #1976d2;
   font-weight: 500;
   transition: color 0.3s ease;
   text-decoration: none;
 }
 
 .custom-btn-link:hover {
-  color: #0d47a1; /* Azul aún más oscuro en hover */
+  color: #0d47a1;
 }
 
 .register-card {
