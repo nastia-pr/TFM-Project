@@ -260,6 +260,9 @@ function formatDate(dateString) {
   font-size: 14px;
   color: #616161;
   margin: 10px 0;
+  height: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .card-actions {

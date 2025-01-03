@@ -40,7 +40,7 @@
           v-model="eventSummary"
           label="Resumen *"
           placeholder="Llama la atención con una breve descripción (máx 140 caracteres)"
-          maxlength="140"
+          maxlength="150"
           outlined
           dense
           required
