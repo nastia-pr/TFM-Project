@@ -113,7 +113,7 @@
             <v-card-text>
               <div class="d-flex align-items-center mb-2">
                 <v-icon class="mr-2 text-primary">mdi-calendar</v-icon>
-                <span>{{ event.date }}</span>
+                <span>{{ formatDate(event.date) }}</span>
               </div>
               <div class="d-flex align-items-center mb-2">
                 <v-icon class="mr-2 text-primary">mdi-map-marker</v-icon>
@@ -150,7 +150,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useEventsStore } from '@/store/index'
 
 // Datos para los filtros
@@ -160,16 +160,28 @@ const selectedLocation = ref(null)
 const startDate = ref('')
 const endDate = ref('')
 
-// Categorías relacionadas con eventos de segunda mano
-const categories = ['Ropa', 'Muebles', 'Tecnología', 'Varios']
-const locations = ['Madrid', 'Barcelona', 'Sevilla', 'Valencia']
-
 // Accedemos al store de eventos
 const eventsStore = useEventsStore()
 
+// Base URL del backend
+const API_BASE_URL = import.meta.env.VITE_API_URL
+
+onMounted(async () => {
+  await eventsStore.fetchEvents(API_BASE_URL)
+})
+
+const categories = computed(() => eventsStore.categories)
+
+// Obtener ubicaciones dinámicas desde el store
+const locations = computed(() => eventsStore.uniqueLocations)
+
 // Filtramos los eventos desde el store
 const filteredEvents = computed(() => {
-  return eventsStore.allEvents.filter((event) => {
+  let events = eventsStore.allEvents
+
+  events = events.sort((a, b) => new Date(a.date) - new Date(b.date))
+
+  return events.filter((event) => {
     // Filtrar por título
     const matchesQuery = event.title
       .toLowerCase()
@@ -181,12 +193,24 @@ const filteredEvents = computed(() => {
 
     // Filtrar por ubicación
     const matchesLocation =
-      !selectedLocation.value || event.location === selectedLocation.value
+      !selectedLocation.value ||
+      event.location
+        .split(',')
+        .map((part) => part.trim())
+        .includes(selectedLocation.value)
 
     // Filtrar por rango de fechas (inicio y fin)
     const eventDate = new Date(event.date)
     const start = startDate.value ? new Date(startDate.value) : null
     const end = endDate.value ? new Date(endDate.value) : null
+
+    if (start) {
+      start.setHours(0, 0, 0, 0)
+    }
+    if (end) {
+      end.setHours(23, 59, 59, 999)
+    }
+    eventDate.setHours(0, 0, 0, 0)
 
     const matchesDate =
       (!start || eventDate >= start) && (!end || eventDate <= end)
@@ -202,6 +226,12 @@ function resetFilters() {
   selectedLocation.value = null
   startDate.value = ''
   endDate.value = ''
+}
+
+function formatDate(dateString) {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' }
+  const date = new Date(dateString)
+  return new Intl.DateTimeFormat('es-ES', options).format(date)
 }
 </script>
 
@@ -265,7 +295,7 @@ function resetFilters() {
 }
 
 .btn-details:hover {
-  background-color: #303f9f;
+  background-color: rgb(28, 133, 224);
 }
 
 .v-card-title {

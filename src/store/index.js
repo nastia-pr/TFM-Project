@@ -1,56 +1,19 @@
 import { defineStore } from 'pinia'
+import axios from 'axios'
+
+const API_BASE_URL = import.meta.env.VITE_API_URL
 
 export const useEventsStore = defineStore('events', {
   state: () => ({
-    events: [
-      {
-        id: 1,
-        title: 'Mercadillo de ropa usada',
-        date: '2024-11-01',
-        location: 'Madrid',
-        category: 'Ropa',
-        image: '/images/event1.avif',
-        description: 'Explora prendas únicas a precios increíbles.',
-        organizer: 'Organizador 1',
-        eventDetails:
-          'Este es un evento de ropa usada donde podrás encontrar una variedad de prendas a precios accesibles.', // Detalles del evento
-      },
-      {
-        id: 2,
-        title: 'Mercadillo de cámaras analógicas',
-        date: '2024-11-10',
-        category: 'Tecnología',
-        location: 'Barcelona',
-        image: '/images/event2.avif',
-        description: 'Ofertas en dispositivos analógicos de segunda mano.',
-        organizer: 'Organizador 2',
-        eventDetails:
-          'En este evento podrás adquirir cámaras analógicas, una oportunidad única para los amantes de la fotografía vintage.',
-      },
-      {
-        id: 3,
-        title: 'Mercado de muebles vintage',
-        date: '2024-12-15',
-        category: 'Muebles',
-        location: 'Valencia',
-        image: '/images/event3.avif',
-        description: 'Encuentra muebles clásicos perfectos para tu hogar.',
-        organizer: 'Organizador 3',
-        eventDetails:
-          'En este evento podrás adquirir cámaras analógicas, una oportunidad única para los amantes de la fotografía vintage.',
-      },
-      {
-        id: 4,
-        title: 'Feria de intercambio',
-        date: '2024-12-20',
-        category: 'Varios',
-        location: 'Sevilla',
-        image: '/images/event4.avif',
-        description: 'Cambia lo que ya no necesitas por algo nuevo.',
-        organizer: 'Organizador 4',
-        eventDetails:
-          'En este evento podrás adquirir cámaras analógicas, una oportunidad única para los amantes de la fotografía vintage.',
-      },
+    events: [],
+    categories: [
+      'Ropa y Accesorios',
+      'Muebles y Decoración',
+      'Tecnología',
+      'Electrodomésticos',
+      'Libros y Papelería',
+      'Arte y Antigüedades',
+      'Varios',
     ],
   }),
   getters: {
@@ -60,11 +23,72 @@ export const useEventsStore = defineStore('events', {
     getEventById: (state) => (id) => {
       return state.events.find((event) => event.id === id)
     },
+    // Obtener ubicaciones únicas (ciudades)
+    uniqueLocations: (state) => {
+      const cities = state.events.map((event) => {
+        const parts = event.location.split(',')
+        return parts[parts.length - 1].trim() // Get the last part and trim any whitespace
+      })
+      return [...new Set(cities)] // Return unique cities
+    },
   },
   actions: {
+    async fetchEvents() {
+      try {
+        const data = await axios.get(`${API_BASE_URL}/events/`)
+        this.events = data.data
+      } catch (error) {
+        alert(error)
+        console.log(error)
+      }
+    },
     // Puedes añadir acciones si necesitas modificar el estado, como agregar un evento o actualizarlo
     addEvent(event) {
       this.events.push(event)
+    },
+  },
+})
+
+export const useAccessTokenStore = defineStore('accessToken', {
+  state: () => ({
+    accessToken: localStorage.getItem('accessToken') || null,
+    loggedIn: !!localStorage.getItem('accessToken'),
+  }),
+  getters: {
+    AccessToken: (state) => state.accessToken,
+    isLoggedIn: (state) => state.loggedIn,
+  },
+  actions: {
+    async pingLogin() {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/logged_in_as/`, {
+          headers: {
+            Authorization: `Bearer ${this.accessToken}`,
+          },
+        })
+      } catch (error) {
+        localStorage.removeItem('accessToken')
+        this.accessToken = null
+        this.isLoggedIn = false
+
+        alert('Session expired. Please log in again.')
+        console.log(error)
+      }
+    },
+
+    setAccessToken(token) {
+      if (token && typeof token === 'string') {
+        this.accessToken = token
+        this.loggedIn = true
+        localStorage.setItem('accessToken', token)
+      } else {
+        console.error('Invalid token')
+      }
+    },
+    logout() {
+      this.accessToken = null
+      this.loggedIn = false
+      localStorage.removeItem('accessToken')
     },
   },
 })

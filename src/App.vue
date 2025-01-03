@@ -12,7 +12,7 @@
         <RouterLink to="/" class="nav-link" active-class="nav-link-active">
           Encuentra Eventos
         </RouterLink>
-        <template v-if="loggedIn">
+        <template v-if="tokenStore.isLoggedIn">
           <RouterLink
             to="/create-event"
             class="nav-link"
@@ -58,7 +58,7 @@
             >
           </v-list-item>
 
-          <template v-if="loggedIn">
+          <template v-if="tokenStore.isLoggedIn">
             <v-list-item>
               <RouterLink to="/create-event" class="nav-link mobile"
                 >Crear Evento</RouterLink
@@ -93,7 +93,7 @@
     </v-app-bar>
 
     <v-main>
-      <RouterView @login-success="handleLoginSuccess" />
+      <RouterView />
     </v-main>
 
     <v-footer color="indigo darken-3">
@@ -114,7 +114,7 @@
           <v-col class="text-center" cols="12" sm="4" md="5">
             <div class="footer-links">
               <RouterLink to="/" class="nav-link">Encuentra Eventos</RouterLink>
-              <template v-if="loggedIn">
+              <template v-if="tokenStore.isLoggedIn">
                 <RouterLink to="/create-event" class="nav-link"
                   >Crea un evento nuevo</RouterLink
                 >
@@ -241,12 +241,13 @@
 
 <script setup>
 import { RouterLink, RouterView, useRouter } from 'vue-router'
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useAccessTokenStore } from './store'
+import axios from 'axios'
 
 const router = useRouter()
-const loggedIn = ref(false)
 const isDesktop = ref(true)
-
+const tokenStore = useAccessTokenStore()
 // Detectar el tamaño de la ventana
 const updateWindowSize = () => {
   isDesktop.value = window.innerWidth >= 600 // Tamaño de pantalla para considerar escritorio
@@ -261,13 +262,28 @@ const goToHome = () => {
   router.push({ name: 'home' })
 }
 
-const handleLoginSuccess = () => {
-  loggedIn.value = true
-}
+// Base URL del backend
+const API_BASE_URL = import.meta.env.VITE_API_URL
 
-const logout = () => {
-  loggedIn.value = false
-  router.push({ name: 'home' })
+console.log('Base URL:', API_BASE_URL)
+
+const logout = async () => {
+  const token = tokenStore.accessToken
+  try {
+    await axios.put(
+      `${API_BASE_URL}/logout/`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    )
+    // Call logout from store to clear the local state
+    tokenStore.logout()
+    // Redirect the user to the home page
+    router.push({ name: 'home' })
+  } catch (error) {
+    console.error('Logout failed:', error)
+  }
 }
 
 const currentYear = ref(new Date().getFullYear())

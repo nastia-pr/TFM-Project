@@ -20,16 +20,32 @@
           <!-- Event Details -->
           <v-card-title class="event-title">{{ event.title }}</v-card-title>
           <v-card-subtitle class="event-subtitle">
-            {{ event.date }} | {{ event.location }}
+            {{ formatDate(event.date) }} | {{ event.location }}
           </v-card-subtitle>
-          <v-card-text class="event-summary">{{ event.summary }}</v-card-text>
+          <v-card-text class="event-summary">{{
+            event.description
+          }}</v-card-text>
+
+          <v-dialog v-model="dialogVisible" max-width="400px">
+            <v-card>
+              <v-card-title class="headline"
+                >¿Estás seguro de eliminar este evento?</v-card-title
+              >
+              <v-card-actions>
+                <v-btn color="primary" @click="deleteEvent(eventIdToDelete)"
+                  >Eliminar</v-btn
+                >
+                <v-btn color="secondary" @click="dialogVisible = false"
+                  >Cancelar</v-btn
+                >
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
 
           <!-- Action Buttons -->
           <v-card-actions class="card-actions">
-            <v-btn color="primary" @click="viewEvent(event.id)">
-              Ver Detalles
-            </v-btn>
-            <v-btn color="error" @click="deleteEvent(event.id)">
+            <v-btn color="primary" @click="editEvent(event)"> Editar </v-btn>
+            <v-btn color="error" @click="confirmDelete(event.id)">
               Eliminar
             </v-btn>
           </v-card-actions>
@@ -37,45 +53,153 @@
       </v-col>
     </v-row>
   </v-container>
+
+  <!-- Edit Event Dialog -->
+  <v-dialog v-model="editDialog" max-width="600px">
+    <v-card>
+      <v-card-title>Editar Evento</v-card-title>
+      <v-card-text>
+        <v-form>
+          <v-text-field
+            v-model="editEventData.image"
+            prepend-icon="mdi-camera"
+          ></v-text-field>
+          <v-text-field
+            v-model="editEventData.title"
+            label="Título"
+          ></v-text-field>
+          <v-textarea
+            v-model="editEventData.description"
+            label="Resumen"
+          ></v-textarea>
+          <v-text-field
+            v-model="editEventData.date"
+            label="Fecha"
+          ></v-text-field>
+          <v-text-field
+            v-model="editEventData.location"
+            label="Ubicación"
+          ></v-text-field>
+          <v-select
+            v-model="editEventData.category"
+            :items="categories"
+            label="Categoría"
+          ></v-select>
+          <v-textarea
+            v-model="editEventData.eventDetails"
+            label="Detalles adicionales"
+          ></v-textarea>
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn color="green" @click="saveEditedEvent()">Guardar</v-btn>
+        <v-btn color="red" @click="editDialog = false">Cancelar</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
+import { useAccessTokenStore } from '@/store'
+import { useRouter } from 'vue-router'
+import { useEventsStore } from '@/store/index'
 
-// Example event data
-const events = ref([
-  {
-    id: 1,
-    title: 'Mercado de Ropa Vintage',
-    date: '08/04/2024',
-    location: 'Madrid, España',
-    summary:
-      'Un evento para los amantes de la moda vintage. Ven y encuentra piezas únicas.',
-    image: 'https://via.placeholder.com/400x200',
-  },
-  {
-    id: 2,
-    title: 'Festival de Segunda Mano',
-    date: '15/05/2024',
-    location: 'Barcelona, España',
-    summary:
-      'Encuentra increíbles artículos de segunda mano en nuestro festival anual.',
-    image: 'https://via.placeholder.com/400x200',
-  },
-  // Add more events as needed
-])
+const accessTokenStore = useAccessTokenStore()
+const eventsStore = useEventsStore()
+const events = ref([])
+const editDialog = ref(false)
+const editEventData = ref({
+  image: '',
+  title: '',
+  description: '',
+  date: '',
+  location: '',
+  category: '',
+  eventDetails: '',
+})
+const errorMessage = ref('')
+const router = useRouter()
+const categories = computed(() => eventsStore.categories)
+const dialogVisible = ref(false)
+const eventIdToDelete = ref(null)
 
-// Methods
-function viewEvent(eventId) {
-  // Logic to navigate to or display event details
-  console.log('View event details:', eventId)
-  // Example: router.push(`/event/${eventId}`);
+const activeEventId = ref(null)
+
+// Base URL del backend
+const API_BASE_URL = import.meta.env.VITE_API_URL
+
+onMounted(async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/my_events/`, {
+      headers: {
+        Authorization: `Bearer ${accessTokenStore.accessToken}`,
+      },
+    })
+    events.value = response.data
+  } catch (error) {
+    errorMessage.value = 'Failed to fetch events. Please try again later.'
+    console.error(error)
+  }
+})
+// Edit Event
+const editEvent = (event) => {
+  activeEventId.value = event.id
+  editEventData.value = { ...event }
+  editDialog.value = true
 }
 
-function deleteEvent(eventId) {
-  // Logic to delete the event
-  console.log('Delete event:', eventId)
-  events.value = events.value.filter((event) => event.id !== eventId)
+// Save the edited event
+const saveEditedEvent = async () => {
+  try {
+    const response = await axios.put(
+      `${API_BASE_URL}/events/${activeEventId.value}`,
+      editEventData.value,
+      {
+        headers: {
+          Authorization: `Bearer ${accessTokenStore.accessToken}`,
+        },
+      }
+    )
+    // Refresh the events list after editing
+    events.value = events.value.map((e) =>
+      e.id === editEventData.value.id ? response.data : e
+    )
+    editDialog.value = false
+  } catch (error) {
+    console.error('Failed to edit event:', error)
+  }
+}
+
+// Confirm delete event
+const confirmDelete = (eventId) => {
+  eventIdToDelete.value = eventId
+  dialogVisible.value = true
+}
+
+// Delete Event
+const deleteEvent = async (eventId) => {
+  try {
+    await axios.delete(`${API_BASE_URL}/events/${eventId}`, {
+      headers: {
+        Authorization: `Bearer ${accessTokenStore.accessToken}`,
+      },
+    })
+    // Remove the deleted event from the list
+    events.value = events.value.filter((event) => event.id !== eventId)
+    // Mostrar mensaje de éxito
+    dialogVisible.value = false
+    alert('Evento eliminado exitosamente')
+  } catch (error) {
+    console.error('No se pudo eliminar el evento:', error)
+  }
+}
+
+function formatDate(dateString) {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' }
+  const date = new Date(dateString)
+  return new Intl.DateTimeFormat('es-ES', options).format(date)
 }
 </script>
 

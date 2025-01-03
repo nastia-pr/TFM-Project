@@ -71,6 +71,19 @@
               </template>
             </v-text-field>
 
+            <v-dialog v-model="dialogVisible" max-width="600px">
+              <v-card>
+                <v-card-title class="headline"
+                  >¡Cuenta creada exitosamente!</v-card-title
+                >
+                <v-card-actions>
+                  <v-btn color="primary" @click="goToLogin"
+                    >Iniciar sesión</v-btn
+                  >
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+
             <v-btn
               :disabled="!valid"
               color="primary"
@@ -94,6 +107,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 
 const router = useRouter()
 
@@ -108,6 +122,10 @@ const showPassword = ref({
   password: false,
   confirm: false,
 })
+const dialogVisible = ref(false)
+
+// Base URL del backend
+const API_BASE_URL = import.meta.env.VITE_API_URL
 
 const checkMobile = () => {
   isMobile.value = window.innerWidth <= 600
@@ -122,16 +140,34 @@ onUnmounted(() => {
   window.removeEventListener('resize', checkMobile)
 })
 
-function submitRegister() {
-  console.log(
-    'Creating account with:',
-    username.value,
-    email.value,
-    password.value
-  )
+async function submitRegister() {
+  if (!valid.value) {
+    alert('Por favor, completa todos los campos correctamente.')
+    return
+  }
+
+  const payload = {
+    username: username.value,
+    email: email.value,
+    password: password.value,
+  }
+
+  try {
+    const response = await axios.post(`${API_BASE_URL}/register/`, payload)
+
+    // Navigate to login or another page after successful registration
+    dialogVisible.value = true
+  } catch (error) {
+    console.error(
+      'Error al crear la cuenta:',
+      error.response?.data || error.message
+    )
+    alert('Hubo un error al crear tu cuenta. Inténtalo nuevamente.')
+  }
 }
 
 function goToLogin() {
+  dialogVisible.value = false
   router.push({ name: 'login' })
 }
 

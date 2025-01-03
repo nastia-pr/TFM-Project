@@ -77,6 +77,11 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
+
+import { useAccessTokenStore } from '@/store/index'
+
+const accessTokenStore = useAccessTokenStore()
 
 // Declarar `emit` al inicio
 const emit = defineEmits(['login-success'])
@@ -89,6 +94,9 @@ const password = ref('')
 const valid = ref(false)
 const showPassword = ref(false)
 const isMobile = ref(false)
+
+// Base URL del backend
+const API_BASE_URL = import.meta.env.VITE_API_URL
 
 const checkMobile = () => {
   isMobile.value = window.innerWidth <= 600
@@ -104,20 +112,25 @@ onUnmounted(() => {
 })
 
 // Methods
-function submitLogin() {
-  const hardcodedUsername = 'user'
-  const hardcodedPassword = 'password123'
+async function submitLogin() {
+  try {
+    const response = await axios.put(`${API_BASE_URL}/login/`, {
+      username: username.value,
+      password: password.value,
+    })
+    const jwtToken = response.data.access_token
 
-  if (
-    username.value === hardcodedUsername &&
-    password.value === hardcodedPassword
-  ) {
+    accessTokenStore.setAccessToken(jwtToken) // Set the new token
+
     emit('login-success')
-
-    // Navigate to the account page if credentials match
     router.push({ name: 'account-welcome' })
-  } else {
-    alert('Invalid credentials. Please try again.')
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+      alert('Invalid credentials. Please try again.')
+    } else {
+      alert('An error occurred. Please try again later.')
+      console.error(error)
+    }
   }
 }
 

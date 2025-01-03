@@ -17,8 +17,8 @@
         </div>
 
         <div class="event-section">
-          <h3 class="section-title">Fecha y hora</h3>
-          <p class="section-text">{{ event.date }}</p>
+          <h3 class="section-title">Fecha</h3>
+          <p class="section-text">{{ formatDate(event.date) }}</p>
           <v-btn
             color="primary"
             outlined
@@ -49,6 +49,11 @@
               tabindex="0"
             ></iframe>
           </div>
+        </div>
+
+        <div class="event-section">
+          <h3 class="section-title">Categoría</h3>
+          <p class="section-text">{{ event.category }}</p>
         </div>
 
         <div class="event-section">
@@ -100,8 +105,15 @@ function addToGoogleCalendar(event) {
   const url = `${baseUrl}?${params}`
   window.open(url, '_blank')
 }
+
 function toggleMap() {
   showMapSection.value = !showMapSection.value
+}
+
+function formatDate(dateString) {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' }
+  const date = new Date(dateString)
+  return new Intl.DateTimeFormat('es-ES', options).format(date)
 }
 </script>
 
@@ -168,7 +180,11 @@ function toggleMap() {
 .button-back {
   font-weight: bold;
   padding: 10px 20px;
-  background: linear-gradient(135deg, #ff8a65, #ff5252);
+  background-color: #3f51b5;
   color: #fff;
+}
+
+.button-back:hover {
+  background-color: rgb(28, 133, 224);
 }
 </style>

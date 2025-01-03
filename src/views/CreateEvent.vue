@@ -11,17 +11,25 @@
         </p>
 
         <!-- Sección para añadir imágenes -->
-        <v-file-input
+        <v-text-field
+          v-model="imageUrl"
           prepend-icon="mdi-camera"
-          label="Añade imágenes"
-          accept="image/*"
-          multiple
+          label="Pega el enlace de la imagen"
           outlined
           dense
-        ></v-file-input>
+        ></v-text-field>
+        <!-- Display the image if the URL is valid -->
+        <v-img
+          v-if="imageUrl"
+          :src="imageUrl"
+          alt="Image preview"
+          height="200"
+          contain
+        ></v-img>
 
-        <!-- Resumen del evento -->
+        <!-- Título y breve resumen del evento -->
         <v-text-field
+          v-model="eventTitle"
           label="Título *"
           placeholder="Escribe un título claro para el evento"
           outlined
@@ -29,6 +37,7 @@
           required
         ></v-text-field>
         <v-textarea
+          v-model="eventSummary"
           label="Resumen *"
           placeholder="Llama la atención con una breve descripción (máx 140 caracteres)"
           maxlength="140"
@@ -40,30 +49,26 @@
         <!-- Fecha y lugar del evento -->
         <v-row class="date-location">
           <v-col cols="12" md="6">
-            <v-date-picker
-              label="Fecha *"
-              v-model="eventDate"
-              outlined
-              dense
-            ></v-date-picker>
-          </v-col>
-          <v-col cols="6" md="3">
-            <v-time-picker
-              label="Desde"
-              v-model="startTime"
-              format="24hr"
-              outlined
-              dense
-            ></v-time-picker>
-          </v-col>
-          <v-col cols="6" md="3">
-            <v-time-picker
-              label="Hasta"
-              v-model="endTime"
-              format="24hr"
-              outlined
-              dense
-            ></v-time-picker>
+            <div class="mb-2 fechaLabel">Fecha *</div>
+            <!-- Label -->
+            <v-menu
+              v-model="menu"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              offset-y
+              max-width="290px"
+              min-width="290px"
+            >
+              <template v-slot:activator="{ props }">
+                <div v-bind="props" class="date-activator" @click="menu = true">
+                  {{ eventDateFormatted || 'Seleccionar fecha' }}
+                </div>
+              </template>
+              <v-date-picker
+                v-model="eventDate"
+                @update:model-value="updateEventDate"
+              ></v-date-picker>
+            </v-menu>
           </v-col>
         </v-row>
 
@@ -71,6 +76,7 @@
         <v-row>
           <v-col cols="12" md="6">
             <v-text-field
+              v-model="eventCity"
               label="Ciudad *"
               placeholder="Introduce la ciudad"
               outlined
@@ -80,6 +86,7 @@
           </v-col>
           <v-col cols="12" md="6">
             <v-text-field
+              v-model="eventStreet"
               label="Calle *"
               placeholder="Introduce la calle"
               outlined
@@ -89,24 +96,37 @@
           </v-col>
         </v-row>
 
-        <!-- Sobre el evento -->
-        <v-text-field
-          label="Organizado por"
-          placeholder="Nombre del organizador"
+        <!-- Categoría del evento -->
+        <v-select
+          v-model="eventCategory"
+          :items="categories"
+          label="Categoría *"
+          placeholder="Selecciona una categoría"
           outlined
           dense
-        ></v-text-field>
-        <v-checkbox
-          v-model="isRecurring"
-          label="¿Es un evento recurrente?"
-        ></v-checkbox>
+          required
+        ></v-select>
+
+        <!-- Sobre el evento -->
         <v-textarea
+          v-model="eventDetails"
           label="Detalles adicionales"
           placeholder="Añade detalles adicionales que los asistentes deben conocer"
           outlined
           dense
         ></v-textarea>
       </v-card-text>
+
+      <v-dialog v-model="dialogVisible" max-width="400px">
+        <v-card>
+          <v-card-title class="headline"
+            >¡Evento creado exitosamente!</v-card-title
+          >
+          <v-card-actions>
+            <v-btn @click="redirectToMyEvents">Ver mis eventos</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 
       <!-- Botón de guardar y publicar -->
       <v-card-actions class="justify-center">
@@ -117,16 +137,77 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
+import { useAccessTokenStore } from '@/store/index'
+import { useEventsStore } from '@/store/index'
 
 const eventDate = ref(null)
-const startTime = ref(null)
-const endTime = ref(null)
-const isRecurring = ref(false)
+const eventTitle = ref('')
+const eventSummary = ref('')
+const eventCity = ref('')
+const eventStreet = ref('')
+const eventDetails = ref('')
+const imageUrl = ref('')
+const eventCategory = ref('')
+const dialogVisible = ref(false)
+const router = useRouter()
 
-function saveEvent() {
-  // Logic to save and publish the event
-  console.log('Event saved')
+const menu = ref(false)
+const eventDateFormatted = computed(() => {
+  return eventDate.value
+    ? new Date(eventDate.value).toLocaleDateString('es-ES')
+    : ''
+})
+
+// Base URL del backend
+const API_BASE_URL = import.meta.env.VITE_API_URL
+
+const accessTokenStore = useAccessTokenStore()
+const eventsStore = useEventsStore()
+
+const categories = computed(() => eventsStore.categories)
+
+async function saveEvent() {
+  try {
+    if (!accessTokenStore.accessToken) {
+      alert('No estás autenticado. Por favor, inicia sesión.')
+      return
+    }
+
+    const payload = {
+      title: eventTitle.value,
+      date: eventDate.value,
+      location: `${eventStreet.value}, ${eventCity.value}`,
+      description: eventSummary.value,
+      eventDetails: eventDetails.value,
+      image: imageUrl.value,
+      category: eventCategory.value,
+    }
+
+    const response = await axios.post(`${API_BASE_URL}/events/`, payload, {
+      headers: {
+        Authorization: `Bearer ${accessTokenStore.accessToken}`,
+      },
+    })
+    if (response.status === 201) {
+      dialogVisible.value = true
+    }
+  } catch (error) {
+    console.error('Error creating event:', error.response.data)
+    alert('No se pudo crear el evento. Verifica los detalles.')
+  }
+  eventsStore.fetchEvents()
+}
+
+const redirectToMyEvents = () => {
+  router.push({ name: 'my-events' })
+}
+
+function updateEventDate(date) {
+  eventDate.value = date
+  menu.value = false // Cierra el menú al seleccionar la fecha
 }
 </script>
 
@@ -193,5 +274,24 @@ function saveEvent() {
 
 .justify-center {
   margin-top: 20px;
+}
+
+.fechaLabel {
+  font-size: 16px;
+}
+
+.date-activator {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-block;
+  text-align: center;
+  background-color: #f9f9f9;
+  transition: background-color 0.3s ease;
+  font-size: 16px;
+}
+.date-activator:hover {
+  background-color: #ececec;
 }
 </style>
