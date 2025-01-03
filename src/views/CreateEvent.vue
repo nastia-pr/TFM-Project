@@ -39,8 +39,8 @@
         <v-textarea
           v-model="eventSummary"
           label="Resumen *"
-          placeholder="Llama la atención con una breve descripción (máx 140 caracteres)"
-          maxlength="150"
+          placeholder="Llama la atención con una breve descripción (máx 200 caracteres)"
+          maxlength="200"
           outlined
           dense
           required
