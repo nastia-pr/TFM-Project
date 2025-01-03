@@ -265,8 +265,6 @@ const goToHome = () => {
 // Base URL del backend
 const API_BASE_URL = import.meta.env.VITE_API_URL
 
-console.log('Base URL:', API_BASE_URL)
-
 const logout = async () => {
   const token = tokenStore.accessToken
   try {

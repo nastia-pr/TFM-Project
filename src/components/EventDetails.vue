@@ -6,7 +6,9 @@
 
       <!-- Event Title -->
       <v-card-title class="event-header text-center">
-        <span class="event-title font-weight-bold">{{ event.title }}</span>
+        <span class="event-title font-weight-bold text-truncate">{{
+          event.title
+        }}</span>
       </v-card-title>
 
       <!-- Event Details -->
