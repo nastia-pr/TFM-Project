@@ -30,6 +30,7 @@
         <!-- Título y breve resumen del evento -->
         <v-text-field
           v-model="eventTitle"
+          class="eventTitle"
           label="Título *"
           placeholder="Escribe un título claro para el evento"
           outlined
@@ -87,7 +88,7 @@
           <v-col cols="12" md="6">
             <v-text-field
               v-model="eventStreet"
-              label="Calle *"
+              label="Calle y número *"
               placeholder="Introduce la calle"
               outlined
               dense
@@ -250,6 +251,10 @@ function updateEventDate(date) {
 .v-date-picker,
 .v-time-picker {
   margin-bottom: 16px;
+}
+
+.eventTitle {
+  margin-top: 20px;
 }
 
 .v-checkbox {
