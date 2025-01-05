@@ -73,10 +73,6 @@
             label="Resumen"
           ></v-textarea>
           <v-text-field
-            v-model="editEventData.date"
-            label="Fecha"
-          ></v-text-field>
-          <v-text-field
             v-model="editEventData.location"
             label="Ubicación"
           ></v-text-field>
@@ -114,7 +110,6 @@ const editEventData = ref({
   image: '',
   title: '',
   description: '',
-  date: '',
   location: '',
   category: '',
   eventDetails: '',
