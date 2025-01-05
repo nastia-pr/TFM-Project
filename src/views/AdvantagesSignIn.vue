@@ -2,7 +2,6 @@
   <div class="advantages-section">
     <h1>Organizar eventos, más fácil que nunca</h1>
     <div class="advantages-container">
-      <!-- Agregamos clases para ajustar la posición vertical de cada tarjeta -->
       <AdvantageCard
         text="Transforma tus ideas en experiencias memorables"
         color="#FFB6C1"
@@ -76,21 +75,20 @@ function goToCreateAccount() {
 }
 
 .join-button:hover {
-  transform: scale(1.05); /* Aumenta ligeramente el tamaño */
+  transform: scale(1.05);
   box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 .join-button:active {
-  transform: scale(0.98); /* Hace un pequeño "rebote" */
+  transform: scale(0.98);
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-/* Ajustes de posición vertical para las tarjetas */
 .card-left {
-  margin-top: 30px; /* Izquierda más abajo */
+  margin-top: 30px;
 }
 
 .card-right {
-  margin-top: 0px; /* Derecha más arriba */
+  margin-top: 0px;
 }
 </style>

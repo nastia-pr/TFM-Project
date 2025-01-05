@@ -5,7 +5,6 @@
       Aquí puedes gestionar tus eventos y crear nuevos.
     </p>
 
-    <!-- Botón para crear un evento -->
     <v-btn
       color="primary"
       class="create-event-btn"
